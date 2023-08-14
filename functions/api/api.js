@@ -2,23 +2,27 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const serviceAccount = require("./permissions.json");
 const express = require("express");
+const serverless = require('serverless-http');
+const router = express.Router();
 
-admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
+if (admin.apps.length === 0) {
+  admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
+}
 
-const app = express();
+const api = express();
 const cors = require("cors");
-app.use(cors({ origin: true }));
+api.use(cors({ origin: true }));
 
 
 const db = admin.firestore();
 
 // ROUTES
-app.get("/hello", (req, res) => {
+router.get("/hello", (req, res) => {
   return res.status(200).send("Hello World!");
 });
 
 // CREATE
-app.post("/api/create", async (req, res) => {
+router.post("/create", async (req, res) => {
   try {
     await db.collection("posts").doc("/" + req.body.id + "/")
       .create({
@@ -34,7 +38,7 @@ app.post("/api/create", async (req, res) => {
 });
 
 // READ
-app.get("/api/read", async (req, res) => {
+router.get("/read", async (req, res) => {
   try {
     const query = db.collection("posts");
     const querySnapshot = await query.get();
@@ -54,7 +58,7 @@ app.get("/api/read", async (req, res) => {
   }
 });
 
-app.get("/api/read/:id", async (req, res) => {
+router.get("/read/:id", async (req, res) => {
   try {
     const snapshot = await db.collection("posts").doc(req.params.id).get();
     const post = snapshot.data();
@@ -69,5 +73,5 @@ app.get("/api/read/:id", async (req, res) => {
 
 // DELETE
 
-// export the api to firebase cloud functions
-exports.app = functions.https.onRequest(app);
+api.use('/.netlify/functions/api', router);
+module.exports.handler = serverless(api);
