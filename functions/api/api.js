@@ -3,11 +3,11 @@ const admin = require("firebase-admin");
 const serviceAccount = require("./permissions.json");
 const express = require("express");
 
-admin.initializeApp({credential: admin.credential.cert(serviceAccount)});
+admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
 
 const app = express();
 const cors = require("cors");
-app.use(cors({origin: true}));
+app.use(cors({ origin: true }));
 
 
 const db = admin.firestore();
@@ -21,11 +21,11 @@ app.get("/hello", (req, res) => {
 app.post("/api/create", async (req, res) => {
   try {
     await db.collection("posts").doc("/" + req.body.id + "/")
-        .create({
-          postId: req.body.id,
-          imageUrl: req.body.imageUrl,
-          userId: req.body.userId,
-        });
+      .create({
+        postId: req.body.id,
+        imageUrl: req.body.imageUrl,
+        userId: req.body.userId,
+      });
     return res.status(201).send();
   } catch (error) {
     console.log(error);
@@ -40,12 +40,12 @@ app.get("/api/read", async (req, res) => {
     const querySnapshot = await query.get();
     const posts = [];
     querySnapshot.forEach(
-        (doc) => {
-          posts.push({
-            id: doc.id,
-            data: doc.data(),
-          });
-        },
+      (doc) => {
+        posts.push({
+          id: doc.id,
+          data: doc.data(),
+        });
+      },
     );
     return res.status(200).send(posts);
   } catch (error) {
