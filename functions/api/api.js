@@ -17,7 +17,7 @@ const db = admin.firestore();
 
 // ROUTES
 router.get("/hello", (req, res) => {
-  return res.status(200).send("Hello World!");
+  return res.json({ message: "HELLO SHUBHAM" });
 });
 
 // CREATE
