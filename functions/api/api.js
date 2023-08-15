@@ -10,8 +10,9 @@ if (admin.apps.length === 0) {
 
 const api = express();
 const cors = require("cors");
+api.use(express.json());
 api.use(cors({ origin: true }));
-
+api.use(express.urlencoded({ extended: true }));
 
 const db = admin.firestore();
 
@@ -24,16 +25,15 @@ router.get("/hello", (req, res) => {
 router.post("/create", async (req, res) => {
   try {
     post = {
-      postId: req.body.id,
+      postId: req.body.postId,
       imageUrl: req.body.imageUrl,
       userId: req.body.userId,
-    }
-    await db.collection("posts").doc("/" + req.body.id + "/")
-      .create(post);
+    };
+    await db.collection("posts").doc("/" + req.body.postId + "/").create(post);
     return res.status(201).send(post);
   } catch (error) {
     console.log(error);
-    return res.status(500).send();
+    return res.status(500).send(error);
   }
 });
 
