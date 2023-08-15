@@ -45,10 +45,7 @@ router.get("/read", async (req, res) => {
     const posts = [];
     querySnapshot.forEach(
       (doc) => {
-        posts.push({
-          id: doc.id,
-          data: doc.data(),
-        });
+        posts.push(doc.data());
       },
     );
     return res.status(200).send(posts);
