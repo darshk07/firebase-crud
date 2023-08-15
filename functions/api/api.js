@@ -23,13 +23,14 @@ router.get("/hello", (req, res) => {
 // CREATE
 router.post("/create", async (req, res) => {
   try {
+    post = {
+      postId: req.body.id,
+      imageUrl: req.body.imageUrl,
+      userId: req.body.userId,
+    }
     await db.collection("posts").doc("/" + req.body.id + "/")
-      .create({
-        postId: req.body.id,
-        imageUrl: req.body.imageUrl,
-        userId: req.body.userId,
-      });
-    return res.status(201).send();
+      .create(post);
+    return res.status(201).send(post);
   } catch (error) {
     console.log(error);
     return res.status(500).send();
